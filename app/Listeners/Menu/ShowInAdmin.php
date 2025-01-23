@@ -44,11 +44,11 @@ class ShowInAdmin
                 if ($this->canAccessMenuItem($title, 'read-sales-invoices')) {
                     $sub->route('invoices.index', $title, [], 10, $attr);
                 }
-              
+
 
                 // $title = trim(trans_choice('general.customers', 2));
                 $title = trim(trans_choice('Students', 2));
-              
+
                 if ($this->canAccessMenuItem($title, 'read-sales-customers')) {
                     $sub->route('customers.index', $title, [], 20, $attr);
                 }
@@ -115,6 +115,9 @@ class ShowInAdmin
         if ($this->canAccessMenuItem($title, 'read-common-reports')) {
             $menu->route('reports.index', $title, [], 60, ['icon' => 'donut_small']);
         }
+        $title = trim(trans_choice('general.inventory', 2));
+        $menu->route('inventories', $title, [], 60, ['icon' => 'bar_chart']);
+
 
         // Apps
         // $title = trim(trans_choice('general.modules', 2));

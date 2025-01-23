@@ -29,11 +29,8 @@ class CreateDocumentItemsAndTotals extends Job implements HasOwner, HasSource, S
     public function handle(): void
     {
         $precision = currency($this->document->currency_code)->getPrecision();
-
         list($sub_total, $actual_total, $discount_amount_total, $taxes) = $this->createItems();
-
         $sort_order = 1;
-
         // Add sub total
         DocumentTotal::create([
             'company_id' => $this->document->company_id,
@@ -46,11 +43,8 @@ class CreateDocumentItemsAndTotals extends Job implements HasOwner, HasSource, S
             'created_from' => $this->request['created_from'],
             'created_by' => $this->request['created_by'],
         ]);
-
         $this->request['amount'] += $actual_total;
-
         $sort_order++;
-
         // Add discount
         if ($discount_amount_total > 0) {
             DocumentTotal::create([
@@ -236,7 +230,7 @@ class CreateDocumentItemsAndTotals extends Job implements HasOwner, HasSource, S
             }
 
             // Set taxes
-            foreach ((array) $document_item->item_taxes as $item_tax) {
+        foreach ((array) $document_item->item_taxes as $item_tax) {
                 if (array_key_exists($item_tax['tax_id'], $taxes)) {
                     $taxes[$item_tax['tax_id']]['amount'] += $item_tax['amount'];
                 } else {

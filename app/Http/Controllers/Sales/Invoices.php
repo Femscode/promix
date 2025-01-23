@@ -14,9 +14,12 @@ use App\Jobs\Document\DuplicateDocument;
 use App\Jobs\Document\SendDocument;
 use App\Jobs\Document\UpdateDocument;
 use App\Models\Common\Contact;
-use App\Models\Document\Document;
+use App\Models\Common\Item;
 
+use App\Models\Document\Document;
+use App\Models\Inventory;
 use App\Traits\Documents;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -514,5 +517,32 @@ class Invoices extends Controller
         event(new \App\Events\Document\DocumentPrinting($invoice));
 
         return $this->dispatch(new DownloadDocument($invoice, null, null, false, 'download'));
+    }
+    public function mark_delivered(Document $invoice)
+    {
+        
+        foreach($invoice->items as $item) {
+            $base_item = Item::find($item->item_id);
+            $quantity = $base_item->quantity;
+            $base_item->quantity -= $item->quantity;
+            $base_item->save();
+            $Inventory = Inventory::create([
+                'item_id' => $base_item->id,
+                'quantity' => $item->quantity,
+                'description' => "A total purchase of ".$item->quantity." ".$item->name,
+                'user_id' => Auth::user()->id,
+                'before' => $quantity,
+                'after' => $base_item->quantity,
+                'type' => 'purchase'
+            ]);
+        }
+        $invoice->delivery_status =1;
+        $invoice->save();
+
+        $message = trans('All Items in this invoice successfully marked delivered!', ['type' => trans_choice('general.invoices', 1)]);
+
+        flash($message)->success();
+
+        return redirect()->back();
     }
 }

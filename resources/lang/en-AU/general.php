@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'dashboards'            => 'Dashboard|Dashboards',
     'items'                 => 'Item|Items',
     'invoices'              => 'Invoice|Invoices',
@@ -22,6 +21,7 @@ return [
     'payments'              => 'Payment|Payments',
     'recurring_transactions'=> 'Recurring Transaction|Recurring Transactions',
     'reports'               => 'Report|Reports',
+    'inventory'               => 'Inventory|Inventories',
     'settings'              => 'Setting|Settings',
     'categories'            => 'Category|Categories',
     'currencies'            => 'Currency|Currencies',
@@ -147,6 +147,7 @@ return [
     'body'                  => 'Body',
     'print'                 => 'Print',
     'download_pdf'          => 'Download PDF',
+    'mark_delivered'          => 'Marked Delivered',
     'customize'             => 'Customise',
     'search'                => 'Search',
     'search_text'           => 'Search for this text',

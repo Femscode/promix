@@ -80,6 +80,7 @@ Route::group(['prefix' => 'sales'], function () {
     Route::get('invoices/{invoice}/email', 'Sales\Invoices@emailInvoice')->name('invoices.email');
     Route::get('invoices/{invoice}/print', 'Sales\Invoices@printInvoice')->name('invoices.print');
     Route::get('invoices/{invoice}/pdf', 'Sales\Invoices@pdfInvoice')->name('invoices.pdf');
+    Route::get('invoices/{invoice}/mark_delivered', 'Sales\Invoices@mark_delivered')->name('invoices.mark_delivered');
     Route::get('invoices/{invoice}/duplicate', 'Sales\Invoices@duplicate')->name('invoices.duplicate');
     Route::post('invoices/import', 'Sales\Invoices@import')->middleware('import')->name('invoices.import');
     Route::get('invoices/export', 'Sales\Invoices@export')->name('invoices.export');
@@ -297,6 +298,9 @@ Route::group(['as' => 'modals.', 'prefix' => 'modals'], function () {
     Route::get('transactions/{transaction}/share/create', 'Modals\TransactionShare@create')->name('transactions.share.create');
 
     Route::resource('taxes', 'Modals\Taxes');
-
    
 });
+
+Route::get('inventories', 'InventoryController@index')->name('inventories');
+Route::get('inventory/{id}', 'InventoryController@singleInventory')->name('viewInventory');
+Route::resource('studentclasses', 'Sales\StudentClass');

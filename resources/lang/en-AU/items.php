@@ -4,6 +4,7 @@ return [
 
     'sale_price'                => 'Sale Price',
     'purchase_price'            => 'Purchase Price',
+    'quantity'                => 'Quantities',
     'enter_item_description'    => 'Enter item description',
     'billing'                   => 'Billing',
     'sale_information'          => 'Sale Information',

@@ -43,6 +43,8 @@
                         <x-form.group.text name="purchase_price" label="{{ trans('items.purchase_price') }}" v-bind:disabled="purchase_information" />
 
                         <x-form.group.tax name="tax_ids" multiple not-required />
+                        <x-form.group.text name="quantity" not-required label="{{ trans('items.quantity') }}" v-bind:disabled="quantity" />
+                   
                     </x-slot>
                 </x-form.section>
 

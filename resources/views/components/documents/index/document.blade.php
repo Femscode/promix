@@ -122,6 +122,9 @@
                     <x-table.td class="{{ $classStatus }}">
                         @stack('status_td_inside_start')
                         <x-show.status status="{{ $item->status }}" background-color="bg-{{ $item->status_label }}" text-color="text-text-{{ $item->status_label }}" />
+                        @if($item->delivery_status == 1)
+                        <x-show.status status="delivered" background-color="bg-{{ $item->status_label }}" text-color="text-text-{{ $item->status_label }}" />
+                        @endif
                         @stack('status_td_inside_end')
                     </x-table.td>
                 @endif

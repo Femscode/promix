@@ -125,13 +125,11 @@ class DocumentTransactions extends Controller
      */
     public function store(Document $document, Request $request)
     {
+        // dd($request->all());
         $response = $this->ajaxDispatch(new CreateBankingDocumentTransaction($document, $request));
-
         if ($response['success']) {
             $response['redirect'] = $this->getRedirectUrl($document, $request);
-
             $message = trans('messages.success.added', ['type' => trans_choice('general.payments', 1)]);
-
             flash($message)->success();
         } else {
             $response['redirect'] = null;
@@ -292,7 +290,7 @@ class DocumentTransactions extends Controller
             ];
 
             $quin = '?';
-    
+
             if (Str::contains($redirect, '?')) {
                 $quin = '&';
             }

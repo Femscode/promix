@@ -24,33 +24,24 @@ class Modules
         if ($contact && ($type != 'all')) {
             $payment_methods = Cache::get($cache_customer);
         }
-
         if (!empty($payment_methods)) {
             return $payment_methods;
         }
-
         $list = [];
-
         $modules = new \stdClass();
         $modules->payment_methods = [];
-
         // Fire the event to get the list of payment methods
         event(new PaymentMethodShowing($modules));
-
         foreach ((array) $modules->payment_methods as $method) {
             if (!isset($method['name']) || !isset($method['code'])) {
                 continue;
             }
-
             if (($contact && empty($method['customer'])) && ($type != 'all')) {
                 continue;
             }
-
             $list[] = $method;
         }
-
         static::sortPaymentMethods($list);
-
         foreach ($list as $method) {
             $payment_methods[$method['code']] = $method['name'];
         }
@@ -61,7 +52,7 @@ class Modules
             Cache::put($cache_admin, $payment_methods, Date::now()->addHour(6));
         }
 
-        return ($payment_methods) ? $payment_methods : [];
+        return ($payment_methods) ? $payment_methods : ['Cash'];
     }
 
     public static function clearPaymentMethodsCache()

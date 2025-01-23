@@ -4,6 +4,7 @@
     </div>
 
     <x-tabs active="general" class="grid grid-cols-2" override="class">
+        
         <x-slot name="navs">
             <x-tabs.nav id="general">
                 {{ trans('general.general') }}

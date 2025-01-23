@@ -26,6 +26,7 @@ return [
 
     'statuses' => [
         'draft'                 => 'Draft',
+        'delivered'                 => 'Delivered',
         'sent'                  => 'Sent',
         'expired'               => 'Expired',
         'viewed'                => 'Viewed',
