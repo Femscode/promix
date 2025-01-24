@@ -4,15 +4,12 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/2.2.1/js/dataTables.min.js"></script>
 <style>
-    * {
+    table, th, td {
         font-size: 0.875rem;
         line-height: 1.25rem;
     }
 
-    .title {
-        font-size: 3rem;
-        font-weight: 300;
-    }
+   
 </style>
 <x-layouts.admin>
 
@@ -28,32 +25,25 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Item</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Before Quantity</th>
-                    <th scope="col">After Quantity</th>
+                    <th scope="col">Total Quantity</th>
+                    <th scope="col">Total Quantity Sold</th>
+                    <th scope="col">Available Quantity</th>
+                    <th scope="col">Total Sales</th>
                     <th scope="col">Action</th>
 
                 </tr>
             </thead>
             <tbody>
-                @foreach($inventories as $key => $inventory)
+                @foreach($items as $key => $item)
                 <tr>
-                    <th scope="row">{{++$key}}</th>
-                    <td>{{$inventory->item->name}}</td>
-                    <td>{{$inventory->description}}</td>
-                    <td>{{number_format($inventory->quantity)}}
-                        @if($inventory->type == 'purchase')
-                        <span class=''><i class='fa fa-arrow-trend-down'></i></span>
-                        @else
-                        <span class=''><i class='fa fa-arrow-trend-up'></i></span>
-                        @endif
-
-                    </td>
-                    <td>{{number_format($inventory->before)}}</td>
-                    <td>{{number_format($inventory->after)}}</td>
+                    <td scope="row">{{++$key}}</td>
+                    <td>{{$item->name}}</td>
+                    <td>{{number_format($item->totalquantity())}}</td>
+                    <td>{{number_format($item->totalsold())}}</td>
+                    <td>{{number_format($item->quantity)}}</td>
+                    <td><b>NGN{{number_format($item->totalsold() * $item->sale_price)}}</b></td>
                     <td>
-                        <a href="{{route('viewInventory',$inventory->item_id)}}" class="btn btn-secondary btn-sm">View Item</a>
+                        <a href="{{route('viewInventory',$item->item_id)}}" class="btn btn-secondary btn-sm">View Records</a>
                     </td>
 
                 </tr>

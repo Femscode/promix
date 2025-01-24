@@ -85,10 +85,14 @@ class Invoices extends Controller
      *
      * @return Response
      */
-    public function store(Request $request)
+    public function store(Request $request) 
     {
+        //check if quantity of every items picked is available
+       
+       
         if ($request->class_id !== null) {
             $response = $this->storeBulk($request);
+            
             if ($response['success']) {
                 $paramaters = ['invoice' => $response['data']->id];
 
@@ -102,7 +106,7 @@ class Invoices extends Controller
 
                 flash($message)->success();
             } else {
-                $response['redirect'] = route('invoices.create');
+                $response['redirect'] = route('invoices.create-bulk');
 
                 $message = $response['message'];
 
@@ -112,6 +116,16 @@ class Invoices extends Controller
             return response()->json($response);
         }
 
+        foreach ($request->items as $item) {
+           
+            $base_item = Item::find($item['item_id']);
+            if ($base_item->quantity < $item['quantity'] * 1) {
+                $response['redirect'] = route('invoices.create');
+                $message = "Only " . $base_item->quantity . " quantities of " . $item['name'] . "left!";
+                flash($message)->error()->important();
+                return response()->json($response);
+            }
+        }
         $response = $this->ajaxDispatch(new CreateDocument($request));
 
         if ($response['success']) {
@@ -214,6 +228,20 @@ class Invoices extends Controller
 
             [$prefix, $number] = [$matches[1], (int) $matches[2]];
             $allStudents = Contact::where('student_class', $data->class_id)->get();
+            $count = count($allStudents);
+            foreach ($data->items as $item) {
+                $base_item = Item::find($item['item_id']);
+                if ($base_item->quantity < $item['quantity'] * $count) {
+                    $response['redirect'] = route('invoices.create');
+                    $message = "Only " . $base_item->quantity . " quantities of " . $item['name'] . "left!";
+                    flash($message)->error()->important();
+                    $response['success'] = false;
+                    $response['message'] = $message;
+                    return $response;
+                    return response()->json(['success' => false, 'message' => $message]);
+          
+                }
+            }
 
             if ($allStudents->isEmpty()) {
                 flash("No students found for the selected class")->error()->important();
@@ -227,8 +255,7 @@ class Invoices extends Controller
 
                 $document_number = $prefix . str_pad(++$number, strlen($matches[2]), '0', STR_PAD_LEFT);
                 $studentData = $this->prepareStudentData($data, $student, $document_number, $firstAmount);
-
-
+                
                 $response = $this->ajaxDispatch(new CreateDocument($studentData));
 
                 if ($isFirstIteration && isset($response['data']->amount)) {
@@ -255,6 +282,8 @@ class Invoices extends Controller
             // Rollback on error
             DB::rollback();
             flash($e->getMessage())->error()->important();
+            $response['success'] = false;
+            $response['message'] =  $e->getMessage();
             return $response;
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -520,8 +549,8 @@ class Invoices extends Controller
     }
     public function mark_delivered(Document $invoice)
     {
-        
-        foreach($invoice->items as $item) {
+
+        foreach ($invoice->items as $item) {
             $base_item = Item::find($item->item_id);
             $quantity = $base_item->quantity;
             $base_item->quantity -= $item->quantity;
@@ -529,14 +558,14 @@ class Invoices extends Controller
             $Inventory = Inventory::create([
                 'item_id' => $base_item->id,
                 'quantity' => $item->quantity,
-                'description' => "A total purchase of ".$item->quantity." ".$item->name,
+                'description' => "A total purchase of " . $item->quantity . " " . $item->name,
                 'user_id' => Auth::user()->id,
                 'before' => $quantity,
                 'after' => $base_item->quantity,
                 'type' => 'purchase'
             ]);
         }
-        $invoice->delivery_status =1;
+        $invoice->delivery_status = 1;
         $invoice->save();
 
         $message = trans('All Items in this invoice successfully marked delivered!', ['type' => trans_choice('general.invoices', 1)]);

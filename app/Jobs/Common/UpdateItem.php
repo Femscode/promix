@@ -19,12 +19,17 @@ class UpdateItem extends Job implements ShouldUpdate
 
         \DB::transaction(function () {
             $quantity = $this->model->quantity;
+            //Check if the updated quantity is greater than the initial quantity
+            if($quantity > $this->request['quantity']) {
+                return false;
+            }
+            $real_quantity = $this->request['quantity'] - $quantity;
             $this->model->update($this->request->all());
             $Inventory = Inventory::create([
                 'item_id' => $this->model->id,
                 'user_id' => Auth::user()->id,
-                'quantity' => $this->request['quantity'],
-                'description' => $this->model->name . ' quantity updated to '. $this->request['quantity'].' quantities',
+                'quantity' => $real_quantity,
+                'description' => $real_quantity . ' quantities of'. $this->model->name.' added!',
                 'before' => $quantity,
                 'after' => $this->request['quantity'],
                 'type' => 'updated'

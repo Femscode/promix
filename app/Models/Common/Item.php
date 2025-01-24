@@ -4,6 +4,7 @@ namespace App\Models\Common;
 
 use App\Abstracts\Model;
 use App\Models\Document\Document;
+use App\Models\Inventory;
 use App\Utilities\Str;
 use App\Traits\Currencies;
 use App\Traits\Media;
@@ -55,13 +56,28 @@ class Item extends Model
      *
      * @var array
      */
-    protected $sortable = ['name', 'category.name', 'description', 'sale_price', 'purchase_price','quantity', 'enabled'];
+    protected $sortable = ['name', 'category.name', 'description', 'sale_price', 'purchase_price', 'quantity', 'enabled'];
 
     /**
      * @var array
      */
     public $cloneable_relations = ['taxes'];
 
+    public function totalquantity()
+    {
+        $total = Inventory::where('item_id', $this->id)
+            ->whereIn('type', ['created', 'updated'])
+            ->sum('quantity');
+        return $total;
+    }
+
+    public function totalsold()
+    {
+        $total = Inventory::where('item_id', $this->id)
+            ->where('type',  'purchase')
+            ->sum('quantity');
+        return $total;
+    }
     public function category()
     {
         return $this->belongsTo('App\Models\Setting\Category')->withoutGlobalScope('App\Scopes\Category')->withDefault(['name' => trans('general.na')]);

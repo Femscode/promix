@@ -36,6 +36,8 @@ class ShowInAdmin
             $menu->route('items.index', $title, [], 20, ['icon' => 'inventory_2']);
         }
 
+        $title = trim(trans_choice('general.inventory', 2));
+        $menu->route('inventories', $title, [], 30, ['icon' => 'bar_chart']);
         // Sales
         $title = trim(trans_choice('general.sales', 2));
         if ($this->canAccessMenuItem($title, ['read-sales-invoices', 'read-sales-customers'])) {
@@ -115,8 +117,7 @@ class ShowInAdmin
         if ($this->canAccessMenuItem($title, 'read-common-reports')) {
             $menu->route('reports.index', $title, [], 60, ['icon' => 'donut_small']);
         }
-        $title = trim(trans_choice('general.inventory', 2));
-        $menu->route('inventories', $title, [], 60, ['icon' => 'bar_chart']);
+       
 
 
         // Apps
